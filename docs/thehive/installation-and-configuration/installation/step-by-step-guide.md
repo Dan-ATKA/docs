@@ -9,11 +9,11 @@ This page is a step by step installation and configuration guide to get an TheHi
 
     === "Debian 10+"
 
-        télécharger https://github.com/adoptium/temurin8-binaries/releases/latest prendre la version AMD64
+        télécharger https://github.com/adoptium/temurin8-binaries/releases/latest prendre la version x64
         ```bash
-        apt-get install -y openjdk-8-jre-headless
-        echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" >> /etc/environment
-        export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+        tar xvf /mnt/usb/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt
+        echo JAVA_HOME="/opt/jdk8u345-b01-jre" >> /etc/environment
+        export JAVA_HOME="/opt/jdk8u345-b01-jre"
         ```
 
     === "RPM"
@@ -84,10 +84,16 @@ Apache Cassandra is a scalable and high available database. TheHive supports the
     === "Other"
 
         Download and untgz archive from http://cassandra.apache.org/download/ in the folder of your choice.
-    
+        https://cassandra.apache.org/doc/latest/cassandra/getting_started/installing.html#installing-the-binary-tarball
+        
+          ```bash
+          tar xvf /mnt/usb/apache-cassandra-3.11.13-bin.tar.gz -C /opt
+          cd /opt
+          mv apache-cassandra-3.11.13-bin.tar.gz cassandra
+          ```
 
 By default, data is stored in `/var/lib/cassandra`.
-
+Je teste dans /opt/cassandra
 
 ### Configuration
 
