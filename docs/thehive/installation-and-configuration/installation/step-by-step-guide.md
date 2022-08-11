@@ -3,12 +3,13 @@
 This page is a step by step installation and configuration guide to get an TheHive 4 instance up and running. This guide is illustrated with examples for Debian and RPM packages based systems and for installation from binary packages.
 
 
-## Java Virtual Machine
+## Java Virtual Machine from 
 
 !!! Example ""
 
-    === "Debian"
+    === "Debian 10+"
 
+        télécharger https://github.com/adoptium/temurin8-binaries/releases/latest prendre la version AMD64
         ```bash
         apt-get install -y openjdk-8-jre-headless
         echo JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" >> /etc/environment
