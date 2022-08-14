@@ -12,22 +12,12 @@ This page is a step by step installation and configuration guide to get an TheHi
         télécharger https://www.openlogic.com/openjdk-downloads?field_java_parent_version_target_id=416&field_operating_system_target_id=426&field_architecture_target_id=391&field_java_package_target_id=401 prendre la version .deb x64
         ```bash
         dpkg -i openlogic-openjdk-jre-8u342-b07-linux-x64-deb.deb
+        *si ça marche pas ajouter --force-depends Ca râle parce qu'il manque des morceaux de java, des fonts... mais ça marche sans
+        
         echo JAVA_HOME="/usr/lib/jvm/openlogic-openjdk-8-hotspot-jre-amd64" >> /etc/environment
         export JAVA_HOME="/usr/lib/jvm/openlogic-openjdk-8-hotspot-jre-amd64"
         ```
-
-    === "RPM"
-    
-        ```bash
-        yum install -y java-1.8.0-openjdk-headless.x86_64
-        echo JAVA_HOME="/usr/lib/jvm/jre-1.8.0" >> /etc/environment
-        export JAVA_HOME="/usr/lib/jvm/jre-1.8.0"
-        ```
-
-    === "Other"
-
-        The installation requires Java 8, so refer to your system documentation to install it.
-
+        même sans le JAVA_HOME ça marche quand même
 
 !!! Note
     TheHive can be loaded by Java 11, but not the stable version of Cassandra, which still requires Java 8. 
@@ -54,26 +44,7 @@ Apache Cassandra is a scalable and high available database. TheHive supports the
 
             ```bash
             dpkg -i cassandra
-            ```
-
-
-    === "RPM"
-
-        1. Add the Apache repository of Cassandra to `/etc/yum.repos.d/cassandra.repo`
-
-            ```bash
-            [cassandra]
-            name=Apache Cassandra
-            baseurl=https://downloads.apache.org/cassandra/redhat/311x/
-            gpgcheck=1
-            repo_gpgcheck=1
-            gpgkey=https://downloads.apache.org/cassandra/KEYS
-            ```
-
-        2. Install the package
-
-            ```bash
-            yum install -y cassandra
+            *pareil ça demande python2.7 on peut faire --force-depends et ça marche quand meme mais pas cqlsh
             ```
 
     === "Other"
@@ -88,25 +59,24 @@ Apache Cassandra is a scalable and high available database. TheHive supports the
           ```
 
 By default, data is stored in `/var/lib/cassandra`.
-Je teste dans /opt/cassandra
 
 ### Configuration
 
 Start by changing the `cluster_name` with `thp`. Run the command `cqlsh`: 
-
-```bash
-cqlsh localhost 9042
-```
-
-```sql
-cqlsh> UPDATE system.local SET cluster_name = 'thp' where key='local';
-```
-
-Exit and then run:
-
-```bash
-nodetool flush
-```
+########Ca sert a rien de faire tout ça!
+#```bash
+#cqlsh localhost 9042
+#```
+#
+#```sql
+#cqlsh> UPDATE system.local SET cluster_name = 'thp' where key='local';
+#```
+#
+#Exit and then run:
+#
+#```bash
+#nodetool flush
+#```
 
 Configure Cassandra by editing `/etc/cassandra/cassandra.yaml` file.
 
@@ -114,7 +84,7 @@ Configure Cassandra by editing `/etc/cassandra/cassandra.yaml` file.
 ```yml
 # content from /etc/cassandra/cassandra.yaml
 
-cluster_name: 'thp'
+cluster_name: 'thp' #juste cette ligne, le reste on touche a rien 
 listen_address: 'xx.xx.xx.xx' # address for nodes
 rpc_address: 'xx.xx.xx.xx' # address for clients
 seed_provider:
@@ -137,16 +107,6 @@ Then restart the service:
 
         ```bash
         service cassandra restart
-        ```
-
-    === "RPM"
-
-        Run the service and ensure it restart after a reboot:
-
-        ```bash
-        systemctl daemon-reload
-        service cassandra start
-        chkconfig cassandra on
         ```
 
         !!! Warning
@@ -172,18 +132,21 @@ To add Cassandra nodes, refer the the [related administration guide](../architec
 
 ## Indexing engine
 
+Si tu touche à rien ça se configure comme ça par défaut et ça marche très bien!
+
 Starting from TheHive 4.1.0, a solution to store data indexes is required. These indexes should be unique and the same for all nodes of TheHive cluster. 
 
 - TheHive embed a Lucene engine you can use for standalone server
 - For clusters setups, an instance of Elasticsearch is required 
 
 !!! Example ""
-    === "Local lucene engine"
+    === "Local lucene engine" 
 
         Create a folder dedicated to host indexes for TheHive: 
 
         ```bash
         mkdir /opt/thp/thehive/index
+        *Installer thehive à ce moment là pour créer l'utilisateur*
         chown thehive:thehive -R /opt/thp/thehive/index
         ```
 
@@ -224,7 +187,7 @@ For standalone production and test servers , we recommends using local filesyste
         To store files on the local filesystem, start by choosing the dedicated folder:
 
         ```bash
-        mkdir -p /opt/thp/thehive/files
+        mkdir -p /opt/thp/thehive/files *pas besoin déjà créé
         ```
 
         This path will be used in the configuration of TheHive.
@@ -232,7 +195,7 @@ For standalone production and test servers , we recommends using local filesyste
         Later, after having installed TheHive, ensure the user `thehive` owns the path chosen for storing files:
 
         ```
-        chown -R thehive:thehive /opt/thp/thehive/files
+        chown -R thehive:thehive /opt/thp/thehive/files *pas besoin tout est ok*
         ```
 
     === "S3 with Min.io"
@@ -253,6 +216,12 @@ This part contains instructions to install TheHive and then configure it.
     TheHive4 can't be installed on the same server than older versions. We recommend installing it on a new server, especially if a migration is foreseen.
 
 ### Installation
+
+Ou alors on a récupéré comme un gros sale le .deb avant et en plus pas de soucis de dependances
+
+    ```bash
+    dpkg -i thehive4_4.1.23-1_all.deb
+    ```
 
 All packages are published on our packages repository. We support Debian and RPM packages as well as binary packages (zip archive). All packages are signed using our GPG key [562CBC1C](https://raw.githubusercontent.com/TheHive-Project/TheHive/master/PGP-PUBLIC-KEY). Its fingerprint is `0CD5 AC59 DE5C 5A8E 0EE1  3849 3D99 BB18 562C BC1C`.
 
@@ -286,23 +255,6 @@ Install TheHive 4.x package of the stable version by using the following command
         sudo apt-get install thehive4
         ```
 
-    === "RPM"
-        1. Setup your system to connect the RPM repository. Create and edit the file `/etc/yum.repos.d/thehive-project.repo`:
-
-            ```bash
-            [thehive-project]
-            enabled=1
-            priority=1
-            name=TheHive-Project RPM repository
-            baseurl=https://rpm.thehive-project.org/release/noarch
-            gpgcheck=1
-            ```
-
-        2. Then install the package using `yum`:
-
-            ```bash
-            yum install thehive4
-            ```
     
     === "Other"
 
@@ -586,6 +538,12 @@ service thehive start
 Please note that the service may take some time to start. Once it is started, you may launch your browser and connect to `http://YOUR_SERVER_ADDRESS:9000/`.
 
 The default admin user is `admin@thehive.local` with password `secret`. It is recommended to change the default password.
+
+Pour que ça se relance automatiquement au redémarrage 
+
+```bash
+systemctl enalbe thehive
+```
 
 
 ## Advanced configuration
