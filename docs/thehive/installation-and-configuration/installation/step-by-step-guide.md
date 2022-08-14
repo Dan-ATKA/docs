@@ -9,11 +9,11 @@ This page is a step by step installation and configuration guide to get an TheHi
 
     === "Debian 10+"
 
-        télécharger https://github.com/adoptium/temurin8-binaries/releases/latest prendre la version x64
+        télécharger https://www.openlogic.com/openjdk-downloads?field_java_parent_version_target_id=416&field_operating_system_target_id=426&field_architecture_target_id=391&field_java_package_target_id=401 prendre la version .deb x64
         ```bash
-        tar xvf /mnt/usb/OpenJDK8U-jre_x64_linux_hotspot_8u345b01.tar.gz -C /opt
-        echo JAVA_HOME="/opt/jdk8u345-b01-jre" >> /etc/environment
-        export JAVA_HOME="/opt/jdk8u345-b01-jre"
+        dpkg -i openlogic-openjdk-jre-8u342-b07-linux-x64-deb.deb
+        echo JAVA_HOME="/usr/lib/jvm/openlogic-openjdk-8-hotspot-jre-amd64" >> /etc/environment
+        export JAVA_HOME="/usr/lib/jvm/openlogic-openjdk-8-hotspot-jre-amd64"
         ```
 
     === "RPM"
@@ -47,18 +47,13 @@ Apache Cassandra is a scalable and high available database. TheHive supports the
 !!! Example ""
     === "Debian"
         
-        1. Add Apache repository references
+        1. Récupérer le .deb de cassandra
 
-            ```bash
-            curl -fsSL https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
-            echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-            ```
 
         2. Install the package
 
             ```bash
-            sudo apt update
-            sudo apt install cassandra
+            dpkg -i cassandra
             ```
 
 
