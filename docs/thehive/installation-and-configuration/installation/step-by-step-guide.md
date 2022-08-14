@@ -542,7 +542,7 @@ The default admin user is `admin@thehive.local` with password `secret`. It is re
 Pour que ça se relance automatiquement au redémarrage 
 
 ```bash
-systemctl enalbe thehive
+systemctl enable thehive
 ```
 
 
